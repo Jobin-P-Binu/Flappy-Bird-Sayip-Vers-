@@ -13,7 +13,7 @@ const CONSTANTS = {
 const birdImage = new Image();
 birdImage.src = 'Assets/default.jpg';
 
-const flapSound = document.getElementById('flap-sound');
+const bgm = document.getElementById('bgm');
 
 /* Game State */
 let canvas, ctx;
@@ -44,7 +44,7 @@ class Bird {
         // Rotate based on velocity
         let rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (this.velocity * 0.1)));
         ctx.rotate(rotation);
-        
+
         if (birdImage.complete) {
             ctx.drawImage(birdImage, -this.width / 2, -this.height / 2, this.width, this.height);
         } else {
@@ -58,7 +58,7 @@ class Bird {
     update() {
         // Apply Gravity
         this.velocity += CONSTANTS.GRAVITY;
-        
+
         // Apply Wind to Velocity (Vertical wind effect)
         this.velocity += wind.y * 0.05;
 
@@ -76,7 +76,7 @@ class Bird {
             this.y = canvas.height - this.height;
             endGame();
         }
-        
+
         // Ceiling Collision
         if (this.y < 0) {
             this.y = 0;
@@ -86,7 +86,6 @@ class Bird {
 
     flap() {
         this.velocity = CONSTANTS.FLAP_STRENGTH;
-        playSound();
     }
 }
 
@@ -105,7 +104,7 @@ class Pipe {
         ctx.fillRect(this.x, 0, this.width, this.topHeight);
         // Bottom Pipe
         ctx.fillRect(this.x, this.bottomY, this.width, canvas.height - this.bottomY);
-        
+
         // Outline
         ctx.strokeStyle = '#27ae60';
         ctx.lineWidth = 2;
@@ -121,7 +120,7 @@ class Pipe {
 function init() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
-    
+
     // Resize handler
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
@@ -150,19 +149,26 @@ function resizeCanvas() {
 
 function handleInput() {
     if (gameOver) return;
-    
+
     if (!gameRunning) {
         gameRunning = true;
         bird.flap(); // First flap to start
+        playBGM();
     } else {
         bird.flap();
     }
 }
 
-function playSound() {
-    if (flapSound) {
-        flapSound.currentTime = 0;
-        flapSound.play().catch(e => console.log("Audio play failed interaction required"));
+function playBGM() {
+    if (bgm) {
+        bgm.play().catch(e => console.log("Audio play failed interaction required"));
+    }
+}
+
+function stopBGM() {
+    if (bgm) {
+        bgm.pause();
+        bgm.currentTime = 0;
     }
 }
 
@@ -174,10 +180,11 @@ function resetGame() {
     gameRunning = false;
     gameOver = false;
     wind = { x: 0, y: 0 };
-    
+
     document.getElementById('score-display').innerText = score;
     document.getElementById('game-over-screen').style.display = 'none';
     updateWindIndicator();
+    stopBGM();
 }
 
 function updateWindSystem() {
@@ -187,7 +194,7 @@ function updateWindSystem() {
         // y: -1 to 1 (Updraft/Downdraft)
         wind.x = (Math.random() * CONSTANTS.MAX_WIND_FORCE * 2) - CONSTANTS.MAX_WIND_FORCE;
         wind.y = (Math.random() * 2) - 1; // Slight vertical wind
-        
+
         updateWindIndicator();
     }
 }
@@ -195,16 +202,16 @@ function updateWindSystem() {
 function updateWindIndicator() {
     const arrow = document.getElementById('wind-arrow');
     const text = document.getElementById('wind-text');
-    
+
     // Calculate angle for arrow
     // atan2(y, x) -> result in radians
     const angle = Math.atan2(wind.y, wind.x);
     arrow.style.transform = `rotate(${angle}rad)`;
-    
+
     // Strength string
     const strength = Math.abs(wind.x).toFixed(1);
     const dirStr = wind.x > 0 ? "Right" : (wind.x < 0 ? "Left" : "Calm");
-    
+
     text.innerText = `Wind: ${strength} (${dirStr})`;
 }
 
@@ -225,7 +232,9 @@ function endGame() {
     if (gameOver) return;
     gameOver = true;
     gameRunning = false;
-    
+
+    stopBGM();
+
     document.getElementById('final-score').innerText = `Score: ${score}`;
     document.getElementById('game-over-screen').style.display = 'block';
 }
@@ -236,7 +245,7 @@ function loop() {
 
     if (gameRunning && !gameOver) {
         frames++;
-        
+
         // Update Wind
         updateWindSystem();
 
@@ -247,17 +256,17 @@ function loop() {
         if (frames % CONSTANTS.PIPE_SPAWN_RATE === 0) {
             pipes.push(new Pipe());
         }
-        
+
         for (let i = 0; i < pipes.length; i++) {
             pipes[i].update();
-            
+
             // Score
             if (!pipes[i].passed && pipes[i].x + pipes[i].width < bird.x) {
                 score++;
                 pipes[i].passed = true;
                 document.getElementById('score-display').innerText = score;
             }
-            
+
             // Remove off-screen
             if (pipes[i].x + pipes[i].width < 0) {
                 pipes.splice(i, 1);
