@@ -11,7 +11,7 @@ const CONSTANTS = {
 
 /* Assets */
 const birdImage = new Image();
-birdImage.src = 'Assets/default.jpg';
+birdImage.src = 'Assets/bird_spritesheet.png';
 
 const bgm = document.getElementById('bgm');
 
@@ -36,6 +36,12 @@ class Bird {
         this.y = 200;
         this.velocity = 0;
         this.drift = 0; // Horizontal drift from wind
+
+        // Animation Props
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+        this.animationSpeed = 10; // Switch frame every 10 ticks
+        this.totalFrames = 3;
     }
 
     draw() {
@@ -45,8 +51,15 @@ class Bird {
         let rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (this.velocity * 0.1)));
         ctx.rotate(rotation);
 
-        if (birdImage.complete) {
-            ctx.drawImage(birdImage, -this.width / 2, -this.height / 2, this.width, this.height);
+        if (birdImage.complete && birdImage.naturalWidth > 0) {
+            const frameWidth = birdImage.naturalWidth / this.totalFrames;
+            const frameHeight = birdImage.naturalHeight;
+
+            ctx.drawImage(
+                birdImage,
+                this.frameIndex * frameWidth, 0, frameWidth, frameHeight, // Source
+                -this.width / 2, -this.height / 2, this.width, this.height // Destination
+            );
         } else {
             // Fallback
             ctx.fillStyle = 'yellow';
@@ -56,6 +69,13 @@ class Bird {
     }
 
     update() {
+        // Animation Logic
+        this.frameTimer++;
+        if (this.frameTimer >= this.animationSpeed) {
+            this.frameTimer = 0;
+            this.frameIndex = (this.frameIndex + 1) % this.totalFrames;
+        }
+
         // Apply Gravity
         this.velocity += CONSTANTS.GRAVITY;
 
@@ -185,6 +205,11 @@ function resetGame() {
     document.getElementById('game-over-screen').style.display = 'none';
     updateWindIndicator();
     stopBGM();
+    const gameOverMusic = document.getElementById('game-over-music');
+    if (gameOverMusic) {
+        gameOverMusic.pause();
+        gameOverMusic.currentTime = 0;
+    }
 }
 
 function updateWindSystem() {
@@ -234,6 +259,11 @@ function endGame() {
     gameRunning = false;
 
     stopBGM();
+    const gameOverMusic = document.getElementById('game-over-music');
+    if (gameOverMusic) {
+        gameOverMusic.currentTime = 0;
+        gameOverMusic.play().catch(e => console.log("Game over audio play failed"));
+    }
 
     document.getElementById('final-score').innerText = `Score: ${score}`;
     document.getElementById('game-over-screen').style.display = 'block';
