@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #333; /* Fallback */
+    font-family: 'Outfit', sans-serif;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* Gradient Sky */
+    background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass through to canvas */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.hud-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.score-container {
+    text-align: center;
+}
+
+#score-display {
+    font-size: 3rem;
+    color: white;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+    font-weight: 700;
+}
+
+.wind-indicator {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+}
+
+#wind-arrow {
+    font-size: 1.5rem;
+    transition: transform 0.5s ease;
+}
+
+#wind-text {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+#game-over-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    pointer-events: auto;
+    display: none; /* Hidden by default */
+}
+
+#game-over-screen h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#final-score {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.btn-restart {
+    background: #4facfe;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+}
+
+.btn-restart:hover {
+    background: #00f2fe;
+    transform: scale(1.05);
+}
+
+.btn-restart:active {
+    transform: scale(0.95);
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flappy with Wind</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div class="score-container">
+                <div id="score-display">0</div>
+            </div>
+            <div class="wind-indicator">
+                <span id="wind-arrow">➤</span>
+                <span id="wind-text">Wind: 0</span>
+            </div>
+        </div>
+
+        <div id="game-over-screen">
+            <h1>Game Over</h1>
+            <p id="final-score">Score: 0</p>
+            <button id="restart-btn" class="btn-restart">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="flap-sound" src="music/Kungfu%20shot.mp3" preload="auto"></audio>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
