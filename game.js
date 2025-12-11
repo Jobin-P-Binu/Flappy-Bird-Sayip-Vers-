@@ -11,7 +11,7 @@ const CONSTANTS = {
 
 /* Assets */
 const birdImage = new Image();
-birdImage.src = 'Assets/bird_spritesheet.png';
+birdImage.src = 'Assets/cropped_circle_image.png';
 
 const bgm = document.getElementById('bgm');
 
@@ -41,7 +41,7 @@ class Bird {
         this.frameIndex = 0;
         this.frameTimer = 0;
         this.animationSpeed = 10; // Switch frame every 10 ticks
-        this.totalFrames = 3;
+        this.totalFrames = 1;
     }
 
     draw() {
